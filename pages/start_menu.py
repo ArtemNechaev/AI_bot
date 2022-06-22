@@ -26,13 +26,14 @@ async def cv (call: types.CallbackQuery):
 
 async def vision(message: types.Message):
     image = BytesIO()
-    await message.photo[0].download(destination_file=image)
-    
+    await message.photo[-1].download(destination_file=image)
+    is_loading = await message.answer('обработка...')
+
+    image.seek(0)
     image = Image.open(image)
-    #url = 'http://images.cocodataset.org/val2017/000000039769.jpg'
-    #image = Image.open(requests.get(url, stream=True).raw)
     image = detect(image)
     photo = types.InputFile(image)
+    await is_loading.delete()
     await message.delete()
     await message.answer_photo(photo)
 
@@ -41,4 +42,4 @@ async def vision(message: types.Message):
 def register_start_menu(dp: Dispatcher):
     dp.register_message_handler(start, commands='start')
     dp.register_callback_query_handler(cv)
-    dp.register_message_handler(vision,content_types=['photo', 'file'])
+    dp.register_message_handler(vision,content_types='photo')

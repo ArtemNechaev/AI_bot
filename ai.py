@@ -2,7 +2,6 @@ from transformers import pipeline
 from PIL import Image
 import matplotlib.pyplot as plt
 import math
-
 from io import BytesIO
 
 COLORS = [[0.000, 0.447, 0.741], [0.850, 0.325, 0.098], [0.929, 0.694, 0.125],
@@ -28,7 +27,7 @@ def plot_results(pil_img, model_outputs):
                 bbox=dict(facecolor='yellow', alpha=0.5))
     plt.axis('off')
     image = BytesIO()
-    fig.savefig(image, format='png', bbox_inches='tight', pad_inches=0, dpi=600)
+    fig.savefig(image, format='jpg', bbox_inches='tight', pad_inches=0, dpi=600)
     image.seek(0)
     return image
 

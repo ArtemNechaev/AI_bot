@@ -8,9 +8,10 @@ from dotenv import load_dotenv
 
 from pages.start_menu import register_start_menu
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+if not os.environ.get('BOT_TOKEN'):
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(dotenv_path):
+        load_dotenv(dotenv_path)
 
 TOKEN=os.environ['BOT_TOKEN']
 
