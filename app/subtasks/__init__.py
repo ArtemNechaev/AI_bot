@@ -1,0 +1,3 @@
+from .start_menu import register_start_menu
+from .vision import register_vision
+from .text2textgeneration import register_text2text_generation
