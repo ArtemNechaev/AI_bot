@@ -10,3 +10,6 @@ gunicorn==20.1.0
 python-dotenv==0.20.0
 sentencepiece==0.1.96
 protobuf==3.20.1
+SQLAlchemy==1.4.40
+beautifulsoup4==4.11.1
+sacremoses==0.0.53

@@ -1,5 +1,7 @@
 import logging
+import tarfile
 
+import requests
 from aiogram import Bot, md, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
@@ -7,9 +9,9 @@ from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils.executor import start_webhook
 import os
-from subtasks import register_start_menu, register_vision, register_text2text_generation
+from handlers import register_start_handler, register_vision_handler, register_text2text_handler, register_translate_handler
 
-from settings import TOKEN, WEBHOOK_HOST
+from settings import TOKEN, WEBHOOK_HOST, IS_PROD
 
 
 WEBHOOK_PATH = f'/{TOKEN}'
@@ -25,21 +27,20 @@ bot = Bot(token=TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(LoggingMiddleware())
-register_start_menu(dp)
-register_vision(dp)
-register_text2text_generation(dp)
+
+register_start_handler(dp)
+register_vision_handler(dp)
+register_translate_handler(dp)
+register_text2text_handler(dp)
 
 
-
-async def on_startup(dp):
+async def on_startup(dp: Dispatcher):
     await bot.set_webhook(WEBHOOK_URL)
-    # insert code here to run it after start
+    
 
 
 async def on_shutdown(dp):
     logging.warning('Shutting down..')
-
-    # insert code here to run it before shutdown
 
     # Remove webhook (not acceptable in some cases)
     await bot.delete_webhook()
@@ -52,13 +53,15 @@ async def on_shutdown(dp):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
-    #start_webhook(
-    #    dispatcher=dp,
-    #    webhook_path=WEBHOOK_PATH,
-    #    on_startup=on_startup,
-    #    on_shutdown=on_shutdown,
-    #    skip_updates=False,
-    #    host=WEBAPP_HOST,
-    #    port=WEBAPP_PORT,
-    #)
+    if IS_PROD:
+        start_webhook(
+            dispatcher=dp,
+            webhook_path=WEBHOOK_PATH,
+            on_startup=on_startup,
+            on_shutdown=on_shutdown,
+            skip_updates=False,
+            host=WEBAPP_HOST,
+            port=WEBAPP_PORT,
+        )
+    else:
+        executor.start_polling(dp, skip_updates=True)
